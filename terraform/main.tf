@@ -145,3 +145,31 @@ resource "aws_instance" "web_server" {
     Name = "terraform-web-server"
   }
 }
+
+resource "aws_s3_bucket" "project_bucket" {
+  bucket = "tf-infra-automation-abi-2026"
+
+  tags = {
+    Name        = "terraform-project-bucket"
+    Environment = "lab"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "block_public" {
+  bucket = aws_s3_bucket.project_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.project_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
